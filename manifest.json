@@ -1,19 +1,19 @@
 {
-  "name": "Smart Bus Alert",
-  "short_name": "BusAlert",
-  "description": "Premium real-time bus tracking and alerts for PMPML.",
-  "start_url": "./index.html",
+  "name": "Bus Alert Pune",
+  "short_name": "Bus Alert",
+  "description": "PMPML Bus 77 Real-time Alert",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#6366f1",
   "icons": [
     {
-      "src": "https://img.icons8.com/fluency/192/bus.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://img.icons8.com/fluency/512/bus.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
