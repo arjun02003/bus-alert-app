@@ -22,7 +22,6 @@
             --accent-secondary: #ec4899;
             --success: #10b981;
             --danger: #ef4444;
-            --glass: blur(16px);
         }
         [data-theme="light"] {
             --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
@@ -75,13 +74,13 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            backdrop-filter: var(--glass);
+            backdrop-filter: blur(16px);
             cursor: pointer;
         }
 
         .clock-card, .next-bus-card, .section-card {
             background: var(--card-bg);
-            backdrop-filter: var(--glass);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 20px;
@@ -322,7 +321,7 @@
             }
         };
 
-        const i18n = {
+        const i18n = { /* same as before */ 
             en: {
                 appTitle: "Bus Alert Pune",
                 appSubtitle: "PMPML City Service",
@@ -334,8 +333,6 @@
                 labelAlertDesc: "Notify when bus is near",
                 labelAlertTime: "Alert Before",
                 labelTimeDesc: "Minutes before arrival",
-                labelTest: "Test Alert",
-                labelEdit: "Edit Times",
                 labelUpcoming: "Upcoming Schedule",
                 labelDismiss: "I'M READY",
                 alertTitle: "BUS IS ARRIVING!"
@@ -351,8 +348,6 @@
                 labelAlertDesc: "बस पास होने पर सूचना",
                 labelAlertTime: "अलर्ट पहले",
                 labelTimeDesc: "आगमन से मिनट पहले",
-                labelTest: "टेस्ट अलर्ट",
-                labelEdit: "समय बदलें",
                 labelUpcoming: "आगामी बसें",
                 labelDismiss: "मैं तैयार हूँ",
                 alertTitle: "बस आ रही है!"
@@ -374,29 +369,45 @@
                 now.toLocaleTimeString('en-IN', { hour12: false });
         }
 
+        // ==================== FIXED FUNCTION ====================
         function refreshDashboard() {
             const now = new Date();
             const currentMins = now.getHours() * 60 + now.getMinutes();
-            const timings = state.routes[state.currentRoute] || [];
+            let timings = state.routes[state.currentRoute] || [];
+
+            if (timings.length === 0) return;
 
             let upcoming = timings.map(t => {
                 const [h, m] = t.split(':').map(Number);
                 let busMins = h * 60 + m;
                 let diff = busMins - currentMins;
-                if (diff < -10) diff += 1440;
-                return { time: t, diff: Math.max(0, diff) };
-            }).sort((a, b) => a.diff - b.diff);
+
+                if (diff < -10) diff += 1440; // Next day
+
+                return { time: t, diff: diff };
+            });
+
+            upcoming.sort((a, b) => a.diff - b.diff);
 
             const next = upcoming[0];
 
+            // Next Bus Display
             document.getElementById('current-route-display').textContent = state.currentRoute;
             document.getElementById('route-full-name').textContent = "Pardi → Hingna Gramin Hospital";
-            document.getElementById('next-bus-eta').textContent = next ? next.diff : "--";
-            document.getElementById('next-bus-time-label').textContent = `Scheduled: ${next ? next.time : '--:--'}`;
 
-            // Upcoming list
+            if (next && next.diff < 1440) {
+                document.getElementById('next-bus-eta').textContent = next.diff;
+                document.getElementById('next-bus-time-label').textContent = `Scheduled: ${next.time}`;
+            } else {
+                document.getElementById('next-bus-eta').textContent = "--";
+                document.getElementById('next-bus-time-label').textContent = "No more buses today";
+            }
+
+            // Upcoming List
             const container = document.getElementById('upcoming-list-container');
-            container.innerHTML = upcoming.slice(0, 8).map(bus => `
+            const nextBuses = upcoming.filter(b => b.diff < 1440).slice(0, 8);
+
+            container.innerHTML = nextBuses.map(bus => `
                 <div>
                     <div>
                         <strong>${bus.time}</strong><br>
@@ -414,8 +425,7 @@
             overlay.style.display = 'flex';
             document.getElementById('alert-title-text').textContent = i18n[state.settings.lang].alertTitle;
             document.getElementById('alert-msg-text').textContent = 
-                `${state.currentRoute} (${"Pardi → Hingna Gramin Hospital"}) is arriving soon!`;
-
+                `${state.currentRoute} is arriving soon!`;
             if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
         }
 
@@ -454,8 +464,6 @@
             document.getElementById('label-alert-desc').textContent = l.labelAlertDesc;
             document.getElementById('label-alert-time').textContent = l.labelAlertTime;
             document.getElementById('label-time-desc').textContent = l.labelTimeDesc;
-            document.getElementById('label-test').textContent = l.labelTest || "Test Alert";
-            document.getElementById('label-edit').textContent = l.labelEdit || "Edit Times";
             document.getElementById('label-upcoming').textContent = l.labelUpcoming;
             document.getElementById('label-dismiss').textContent = l.labelDismiss;
         }
@@ -476,8 +484,8 @@
                 const parsed = JSON.parse(saved);
                 state.settings = parsed.settings || state.settings;
                 state.currentRoute = parsed.currentRoute || state.currentRoute;
-                document.getElementById('alert-toggle').checked = state.settings.alertOn;
             }
+            document.getElementById('alert-toggle').checked = state.settings.alertOn;
         }
 
         function openTimingsModal() {
