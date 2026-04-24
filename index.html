@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bus Alert Pune - PMPML 35A</title>
+    <meta name="description" content="Real-time PMPML Bus Alert - Pardi to Hingna Gramin Hospital">
+    <meta name="theme-color" content="#6366f1">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
             --accent-primary: #6366f1;
             --accent-secondary: #ec4899;
             --success: #10b981;
@@ -8,6 +25,18 @@
             --danger: #ef4444;
         }
         [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-primary: #4f46e5;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             color: var(--text-primary);
             min-height: 100vh;
             padding: 16px;
@@ -15,6 +44,23 @@
         }
         .container {
             max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon { font-size: 2.3rem; }
+        .logo-text h1 {
             font-family: 'Outfit', sans-serif;
             font-size: 1.4rem;
             font-weight: 800;
@@ -38,14 +84,24 @@
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+
         .logo-text p { font-size: 0.8rem; color: var(--text-secondary); }
+
         .icon-btn {
+            width: 42px; height: 42px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
             backdrop-filter: blur(16px);
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
         }
         .icon-btn:active { transform: scale(0.95); }
+
         .clock-card, .next-bus-card, .section-card {
             background: var(--card-bg);
             backdrop-filter: blur(16px);
@@ -62,6 +118,27 @@
         }
         .time-display {
             font-family: 'Outfit', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+        .bus-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.6rem;
+            font-weight: 900;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0 4px 0;
+        }
+        .route-name {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .eta-value {
+            font-size: 4.8rem;
             font-weight: 800;
             line-height: 1;
             font-family: 'Outfit', sans-serif;
@@ -84,9 +161,19 @@
             transition: width 1s ease-in-out;
             border-radius: 6px;
         }
+
         .section-title {
             font-weight: 700;
             margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
             border-bottom: 1px solid var(--card-border);
         }
         .setting-row:last-child { border-bottom: none; }
@@ -94,8 +181,27 @@
         .switch {
             position: relative;
             width: 50px; height: 26px;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #475569;
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
         input:checked + .slider { background: var(--accent-primary); }
         input:checked + .slider:before { transform: translateX(24px); }
+
         select {
             background: var(--card-bg);
             color: var(--text-primary);
@@ -105,40 +211,29 @@
             font-family: 'Inter', sans-serif;
             outline: none;
         }
+
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .secondary-btn {
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
             border: 1px solid var(--card-border);
             color: var(--text-primary);
             cursor: pointer;
             transition: background 0.2s;
         }
-        #alert-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.92);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            backdrop-filter: blur(20px);
         .secondary-btn:hover { background: rgba(255,255,255,0.1); }
         .secondary-btn:active { transform: scale(0.98); }
         [data-theme="light"] .secondary-btn {
             background: rgba(0,0,0,0.05);
         }
-        .dismiss-btn {
-            background: white;
-            color: black;
-            border: none;
-            padding: 16px 50px;
-            border-radius: 50px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-top: 30px;
-        }
+
         .upcoming-list > div {
             background: rgba(255,255,255,0.05);
             padding: 14px 16px;
@@ -152,6 +247,7 @@
         [data-theme="light"] .upcoming-list > div {
             background: rgba(0,0,0,0.03);
         }
+
         /* Modal / Overlay */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -173,6 +269,7 @@
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
+
         /* Timings List within Modal */
         .timings-list {
             max-height: 250px; overflow-y: auto;
@@ -198,6 +295,7 @@
             color-scheme: dark; font-family: 'Inter', sans-serif;
         }
         [data-theme="light"] .modern-input { color-scheme: light; }
+
         .dismiss-btn {
             background: white; color: black; border: none;
             padding: 16px 50px; border-radius: 50px;
@@ -205,6 +303,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .dismiss-btn:active { transform: scale(0.95); }
+
         #alert-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000;
             display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -212,6 +311,7 @@
             opacity: 0; transition: opacity 0.4s;
         }
         #alert-overlay.active { display: flex; opacity: 1; }
+
     </style>
 </head>
 <body data-theme="dark">
@@ -221,39 +321,32 @@
             <div class="logo-section">
                 <span class="logo-icon">🚌</span>
                 <div class="logo-text">
-                    <h1 id="app-title">Bus Alert Pune</h1>
                     <h1><span id="app-title">Bus Alert Pune</span> <span class="live-indicator"></span></h1>
                     <p id="app-subtitle">PMPML City Service</p>
                 </div>
             </div>
-            <div>
-                <button class="icon-btn" onclick="toggleLanguage()" id="lang-btn">HI</button>
-                <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
             <div style="display:flex; gap:8px;">
                 <button class="icon-btn" onclick="App.toggleLanguage()" id="lang-btn">HI</button>
                 <button class="icon-btn" onclick="App.toggleTheme()" id="theme-btn">🌙</button>
             </div>
         </header>
+
         <!-- Clock -->
         <div class="clock-card">
-            <span id="label-now">Current Time</span>
             <span id="label-now" style="color:var(--text-secondary); font-weight:600; font-size:0.9rem;">Current Time</span>
             <div class="time-display" id="current-clock">00:00:00</div>
         </div>
+
         <!-- Next Bus -->
         <div class="next-bus-card">
-            <div class="next-bus-label" id="label-next-bus">Next Bus Arriving In</div>
             <div class="next-bus-label" id="label-next-bus" style="font-weight:600; color:var(--text-secondary);">Next Bus Arriving In</div>
-            <div class="bus-number" id="current-route-display">Bus 77</div>
+            <div class="bus-number" id="current-route-display">Bus 35A</div>
             <div class="route-name" id="route-full-name">Pardi → Hingna Gramin Hospital</div>
             
-            <div style="margin: 20px 0;">
             <div style="margin: 15px 0;">
                 <span class="eta-value" id="next-bus-eta">--</span>
-                <span class="eta-unit" id="label-mins" style="font-size:1.35rem;">mins</span>
                 <span class="eta-unit" id="label-mins" style="font-size:1.35rem; font-weight:600;">mins</span>
             </div>
-            <p id="next-bus-time-label" style="color:var(--text-secondary);font-weight:600;">Scheduled: --:--</p>
             
             <div class="progress-container">
                 <div class="progress-bar" id="route-progress"></div>
@@ -261,11 +354,18 @@
             
             <p id="next-bus-time-label" style="color:var(--text-secondary);font-weight:600; margin-top:15px;">Scheduled: --:--</p>
         </div>
+
         <!-- Settings -->
+        <div class="section-card">
+            <div class="section-title">
+                <span>⚙️</span> <span id="label-settings">Smart Alert Settings</span>
+            </div>
+            <div class="setting-row">
+                <div>
+                    <h4 id="label-smart-alert">Smart Alert</h4>
                     <p id="label-alert-desc" style="font-size:0.82rem;color:var(--text-secondary);">Notify when bus is near</p>
                 </div>
                 <label class="switch">
-                    <input type="checkbox" id="alert-toggle" onchange="saveSettings()">
                     <input type="checkbox" id="alert-toggle" onchange="App.saveSettings()">
                     <span class="slider"></span>
                 </label>
@@ -275,40 +375,43 @@
                     <h4 id="label-alert-time">Alert Before</h4>
                     <p id="label-time-desc" style="font-size:0.82rem;color:var(--text-secondary);">Minutes before arrival</p>
                 </div>
-                <select id="alert-threshold" onchange="saveSettings()">
                 <select id="alert-threshold" onchange="App.saveSettings()">
                     <option value="3">3 mins</option>
-                    <option value="5" selected>5 mins</option>
                     <option value="5">5 mins</option>
                     <option value="7">7 mins</option>
                     <option value="10">10 mins</option>
                 </select>
             </div>
             <div class="btn-group">
-                <button class="secondary-btn" onclick="testAlert()">🔔 Test Alert</button>
-                <button class="secondary-btn" onclick="openTimingsModal()">✏️ Edit Times</button>
                 <button class="secondary-btn" onclick="App.testAlert()">🔔 <span id="label-test">Test Alert</span></button>
                 <button class="secondary-btn" onclick="App.openEditModal()">✏️ <span id="label-edit">Edit Times</span></button>
             </div>
         </div>
+
+        <!-- Upcoming Schedule -->
+        <div class="section-card">
+            <div class="section-title">
+                <span>🕒</span> <span id="label-upcoming">Upcoming Schedule</span>
+            </div>
+            <div class="upcoming-list" id="upcoming-list-container"></div>
+        </div>
+    </div>
+
     <!-- Alert Overlay -->
     <div id="alert-overlay">
         <div class="alert-content">
-            <div style="font-size:6rem;margin-bottom:20px;">🚍</div>
-            <h2 id="alert-title-text" style="color:#ef4444;font-size:2.4rem;">BUS IS ARRIVING!</h2>
-            <p id="alert-msg-text" style="font-size:1.35rem;margin:20px 0;"></p>
-            <button class="dismiss-btn" onclick="stopAlert()" id="label-dismiss">I'M READY</button>
             <div style="font-size:6rem;margin-bottom:20px; animation: pulse-red 1s infinite;">🚍</div>
             <h2 id="alert-title-text" style="color:var(--danger);font-size:2.4rem; font-family:'Outfit', sans-serif;">BUS IS ARRIVING!</h2>
             <p id="alert-msg-text" style="font-size:1.35rem;margin:20px 0; color:white;"></p>
             <button class="dismiss-btn" onclick="App.stopAlert()" id="label-dismiss">I'M READY</button>
         </div>
     </div>
+
     <!-- Edit Timings Modal -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 style="margin-bottom:15px; font-family:'Outfit', sans-serif; font-size:1.5rem;" id="label-edit-title">Edit Route Timings</h3>
-            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:15px;">Bus 77 - Pardi → Hingna Gramin Hospital</p>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:15px;">Bus 35A - Pardi → Hingna Gramin Hospital</p>
             
             <div id="timings-list" class="timings-list">
                 <!-- Dynamically populated -->
@@ -322,25 +425,8 @@
             <button class="dismiss-btn" onclick="App.closeEditModal()" style="width:100%; margin-top:20px; padding:12px; font-size:1rem;">DONE</button>
         </div>
     </div>
+
     <script>
-        let state = {
-            currentRoute: "Bus 77",
-            routes: {
-                "Bus 77": [
-                    "05:30","05:40","05:50","06:00","06:10","06:20","06:30","06:40","06:50",
-                    "07:00","07:10","07:20","07:30","07:36","07:42","07:48","07:54",
-                    "08:00","08:06","08:12","08:18","08:24","08:30","08:36","08:42","08:48","08:54","09:00",
-                    "09:05","09:10","09:15","09:20","09:25","09:30","09:37","09:44","09:51","09:58",
-                    "10:00","10:10","10:20","10:30","10:40","10:50","11:00","11:05","11:10","11:15","11:20","11:25","11:30",
-                    "11:36","11:42","11:48","11:54","12:00","12:07","12:14","12:21","12:28",
-                    "12:30","12:40","12:50","13:00","13:30","13:40","13:50","14:00","14:10","14:20","14:30",
-                    "14:37","14:44","14:51","14:58","15:00","15:10","15:20","15:30","15:36","15:42","15:48","15:54","16:00",
-                    "16:10","16:20","16:30","16:34","16:38","16:42","16:46","16:50","16:54","16:58",
-                    "17:00","17:05","17:10","17:15","17:20","17:25","17:30","17:35","17:40","17:45","17:50","17:55","18:00",
-                    "18:06","18:12","18:18","18:24","18:30","18:40","18:50","19:00",
-                    "19:07","19:14","19:21","19:28","19:30","19:36","19:42","19:48","19:54","20:00"
-                ],
-                "Bus 45": ["09:00", "12:00", "15:00", "18:00", "21:00"]
         // ==================== AUDIO AND VOICE MODULE ====================
         const AudioNotifier = {
             playChime: function() {
@@ -368,6 +454,7 @@
                         osc.start(startTime);
                         osc.stop(startTime + duration);
                     };
+
                     const now = ctx.currentTime;
                     playTone(880, now, 0.6); // A5
                     playTone(1108.5, now + 0.2, 0.8); // C#6
@@ -375,11 +462,6 @@
                     console.error("Audio feature error:", e);
                 }
             },
-            settings: {
-                alertOn: true,
-                threshold: 5,
-                theme: "dark",
-                lang: "en"
             
             announce: function(text, lang) {
                 if ('speechSynthesis' in window) {
@@ -392,27 +474,13 @@
                 }
             }
         };
-        const i18n = { /* same as before */ 
-            en: {
-                appTitle: "Bus Alert Pune",
-                appSubtitle: "PMPML City Service",
-                labelNow: "Current Time",
-                labelNextBus: "Next Bus Arriving In",
-                labelMins: "mins",
-                labelSettings: "Smart Alert Settings",
-                labelSmartAlert: "Smart Alert",
-                labelAlertDesc: "Notify when bus is near",
-                labelAlertTime: "Alert Before",
-                labelTimeDesc: "Minutes before arrival",
-                labelUpcoming: "Upcoming Schedule",
-                labelDismiss: "I'M READY",
-                alertTitle: "BUS IS ARRIVING!"
+
         // ==================== MAIN APPLICATION LOGIC ====================
         const App = {
             state: {
-                currentRoute: "Bus 77",
+                currentRoute: "Bus 35A",
                 routes: {
-                    "Bus 77": [
+                    "Bus 35A": [
                         "05:30","05:40","05:50","06:00","06:10","06:20","06:30","06:40","06:50",
                         "07:00","07:10","07:20","07:30","07:36","07:42","07:48","07:54",
                         "08:00","08:06","08:12","08:18","08:24","08:30","08:36","08:42","08:48","08:54","09:00",
@@ -435,22 +503,6 @@
                 },
                 lastAlertedBus: null
             },
-            hi: {
-                appTitle: "बस अलर्ट पुणे",
-                appSubtitle: "PMPML सिटी सर्विस",
-                labelNow: "वर्तमान समय",
-                labelNextBus: "अगली बस आने में",
-                labelMins: "मिनट",
-                labelSettings: "स्मार्ट अलर्ट सेटिंग्स",
-                labelSmartAlert: "स्मार्ट अलर्ट",
-                labelAlertDesc: "बस पास होने पर सूचना",
-                labelAlertTime: "अलर्ट पहले",
-                labelTimeDesc: "आगमन से मिनट पहले",
-                labelUpcoming: "आगामी बसें",
-                labelDismiss: "मैं तैयार हूँ",
-                alertTitle: "बस आ रही है!"
-            }
-        };
             
             i18n: {
                 en: {
@@ -470,7 +522,7 @@
                     labelTest: "Test Alert",
                     labelEdit: "Edit Times",
                     labelEditTitle: "Edit Route Timings",
-                    voiceMsg: "Attention, Bus 77 is arriving in"
+                    voiceMsg: "Attention, Bus 35A is arriving in"
                 },
                 hi: {
                     appTitle: "बस अलर्ट पुणे",
@@ -489,17 +541,10 @@
                     labelTest: "टेस्ट अलर्ट",
                     labelEdit: "समय संपादित करें",
                     labelEditTitle: "रूट का समय संपादित करें",
-                    voiceMsg: "ध्यान दें, बस 77 आ रही है"
+                    voiceMsg: "ध्यान दें, बस 35A आ रही है"
                 }
             },
-        function init() {
-            loadFromStorage();
-            updateClock();
-            updateUIStrings();
-            refreshDashboard();
-            setInterval(updateClock, 10000);
-            setInterval(refreshDashboard, 30000);
-        }
+
             init: function() {
                 this.loadFromStorage();
                 
@@ -517,31 +562,20 @@
                 setInterval(() => this.updateClock(), 1000);
                 setInterval(() => this.refreshDashboard(), 30000); // Check schedule every 30s
             },
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('current-clock').textContent = 
-                now.toLocaleTimeString('en-IN', { hour12: false });
-        }
+
             updateClock: function() {
                 const now = new Date();
                 document.getElementById('current-clock').textContent = 
                     now.toLocaleTimeString('en-IN', { hour12: false });
             },
-        // ==================== FIXED FUNCTION ====================
-        function refreshDashboard() {
-            const now = new Date();
-            const currentMins = now.getHours() * 60 + now.getMinutes();
-            let timings = state.routes[state.currentRoute] || [];
+
             refreshDashboard: function() {
                 const now = new Date();
                 const currentMins = now.getHours() * 60 + now.getMinutes();
                 let timings = [...this.state.routes[this.state.currentRoute]] || [];
-            if (timings.length === 0) return;
+
                 if (timings.length === 0) return;
-            let upcoming = timings.map(t => {
-                const [h, m] = t.split(':').map(Number);
-                let busMins = h * 60 + m;
-                let diff = busMins - currentMins;
+
                 let upcoming = timings.map(t => {
                     const [h, m] = t.split(':').map(Number);
                     let busMins = h * 60 + m;
@@ -549,14 +583,13 @@
                     if (diff < -10) diff += 1440; // Next day
                     return { time: t, diff: diff };
                 });
-                if (diff < -10) diff += 1440; // Next day
+
                 upcoming.sort((a, b) => a.diff - b.diff);
                 const next = upcoming[0];
-                return { time: t, diff: diff };
-            });
+
                 const etaEl = document.getElementById('next-bus-eta');
                 const progressEl = document.getElementById('route-progress');
-            upcoming.sort((a, b) => a.diff - b.diff);
+
                 if (next && next.diff < 1440) {
                     etaEl.textContent = next.diff;
                     document.getElementById('next-bus-time-label').textContent = `Scheduled: ${next.time}`;
@@ -569,40 +602,27 @@
                     } else {
                         etaEl.style.color = "var(--success)";
                     }
-            const next = upcoming[0];
+
                     // Progress Bar Simulation (Max 60 mins journey simulation)
                     let progressPercentage = 100 - ((Math.min(next.diff, 60) / 60) * 100);
                     progressEl.style.width = `${progressPercentage}%`;
-            // Next Bus Display
-            document.getElementById('current-route-display').textContent = state.currentRoute;
-            document.getElementById('route-full-name').textContent = "Pardi → Hingna Gramin Hospital";
+
                     // Check for Alert Trigger
                     this.checkAlertCondition(next);
-            if (next && next.diff < 1440) {
-                document.getElementById('next-bus-eta').textContent = next.diff;
-                document.getElementById('next-bus-time-label').textContent = `Scheduled: ${next.time}`;
-            } else {
-                document.getElementById('next-bus-eta').textContent = "--";
-                document.getElementById('next-bus-time-label').textContent = "No more buses today";
-            }
+
                 } else {
                     etaEl.textContent = "--";
                     etaEl.style.color = "var(--text-primary)";
                     progressEl.style.width = "0%";
                     document.getElementById('next-bus-time-label').textContent = "No more buses today";
                 }
-            // Upcoming List
-            const container = document.getElementById('upcoming-list-container');
-            const nextBuses = upcoming.filter(b => b.diff < 1440).slice(0, 8);
+
                 // Populate Upcoming List
                 const container = document.getElementById('upcoming-list-container');
                 const nextBuses = upcoming.filter(b => b.diff > 0 && b.diff < 1440).slice(0, 8);
-            container.innerHTML = nextBuses.map(bus => `
-                <div>
+
                 container.innerHTML = nextBuses.map(bus => `
                     <div>
-                        <strong>${bus.time}</strong><br>
-                        <small style="color:var(--text-secondary)">${state.currentRoute}</small>
                         <div>
                             <strong>${bus.time}</strong><br>
                             <small style="color:var(--text-secondary)">${this.state.currentRoute}</small>
@@ -611,22 +631,9 @@
                             ${bus.diff} ${this.state.settings.lang === 'en' ? 'min' : 'मिनट'}
                         </div>
                     </div>
-                    <div style="text-align:right; color:var(--success); font-weight:600;">
-                        ${bus.diff} ${state.settings.lang === 'en' ? 'min' : 'मिनट'}
-                    </div>
-                </div>
-            `).join('');
-        }
                 `).join('');
             },
-        function triggerAlert() {
-            const overlay = document.getElementById('alert-overlay');
-            overlay.style.display = 'flex';
-            document.getElementById('alert-title-text').textContent = i18n[state.settings.lang].alertTitle;
-            document.getElementById('alert-msg-text').textContent = 
-                `${state.currentRoute} is arriving soon!`;
-            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-        }
+
             checkAlertCondition: function(nextBus) {
                 if (!this.state.settings.alertOn) return;
                 
@@ -641,9 +648,7 @@
                     this.state.lastAlertedBus = null;
                 }
             },
-        function stopAlert() {
-            document.getElementById('alert-overlay').style.display = 'none';
-        }
+
             triggerRealAlert: function(mins) {
                 const langData = this.i18n[this.state.settings.lang];
                 this.showOverlayAlert(langData.alertTitle, `${langData.voiceMsg} ${mins} ${langData.labelMins}`);
@@ -651,9 +656,7 @@
                 AudioNotifier.announce(`${langData.voiceMsg} ${mins} ${this.state.settings.lang === 'en' ? 'minutes' : 'मिनट'}`, this.state.settings.lang);
                 if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             },
-        function testAlert() {
-            triggerAlert();
-        }
+
             testAlert: function() {
                 const langData = this.i18n[this.state.settings.lang];
                 this.showOverlayAlert(langData.alertTitle, `${langData.voiceMsg} 5 ${langData.labelMins}`);
@@ -661,54 +664,25 @@
                 AudioNotifier.announce(`${langData.voiceMsg} 5 ${this.state.settings.lang === 'en' ? 'minutes' : 'मिनट'}`, this.state.settings.lang);
                 if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             },
-        function toggleTheme() {
-            state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', state.settings.theme);
-            document.getElementById('theme-btn').textContent = state.settings.theme === 'dark' ? '🌙' : '☀️';
-            saveToStorage();
-        }
+
             showOverlayAlert: function(title, msg) {
                 const overlay = document.getElementById('alert-overlay');
                 overlay.classList.add('active');
                 document.getElementById('alert-title-text').textContent = title;
                 document.getElementById('alert-msg-text').textContent = msg;
             },
-        function toggleLanguage() {
-            state.settings.lang = state.settings.lang === 'en' ? 'hi' : 'en';
-            document.getElementById('lang-btn').textContent = state.settings.lang === 'en' ? 'HI' : 'EN';
-            updateUIStrings();
-            refreshDashboard();
-            saveToStorage();
-        }
+
             stopAlert: function() {
                 document.getElementById('alert-overlay').classList.remove('active');
             },
-        function updateUIStrings() {
-            const l = i18n[state.settings.lang];
-            document.getElementById('app-title').textContent = l.appTitle;
-            document.getElementById('app-subtitle').textContent = l.appSubtitle;
-            document.getElementById('label-now').textContent = l.labelNow;
-            document.getElementById('label-next-bus').textContent = l.labelNextBus;
-            document.getElementById('label-mins').textContent = l.labelMins;
-            document.getElementById('label-settings').textContent = l.labelSettings;
-            document.getElementById('label-smart-alert').textContent = l.labelSmartAlert;
-            document.getElementById('label-alert-desc').textContent = l.labelAlertDesc;
-            document.getElementById('label-alert-time').textContent = l.labelAlertTime;
-            document.getElementById('label-time-desc').textContent = l.labelTimeDesc;
-            document.getElementById('label-upcoming').textContent = l.labelUpcoming;
-            document.getElementById('label-dismiss').textContent = l.labelDismiss;
-        }
+
             toggleTheme: function() {
                 this.state.settings.theme = this.state.settings.theme === 'dark' ? 'light' : 'dark';
                 document.body.setAttribute('data-theme', this.state.settings.theme);
                 document.getElementById('theme-btn').textContent = this.state.settings.theme === 'dark' ? '🌙' : '☀️';
                 this.saveToStorage();
             },
-        function saveSettings() {
-            state.settings.alertOn = document.getElementById('alert-toggle').checked;
-            state.settings.threshold = parseInt(document.getElementById('alert-threshold').value);
-            saveToStorage();
-        }
+
             toggleLanguage: function() {
                 this.state.settings.lang = this.state.settings.lang === 'en' ? 'hi' : 'en';
                 document.getElementById('lang-btn').textContent = this.state.settings.lang === 'en' ? 'HI' : 'EN';
@@ -716,9 +690,7 @@
                 this.refreshDashboard();
                 this.saveToStorage();
             },
-        function saveToStorage() {
-            localStorage.setItem('pmpmlBusAlert', JSON.stringify(state));
-        }
+
             updateUIStrings: function() {
                 const l = this.i18n[this.state.settings.lang];
                 document.getElementById('app-title').textContent = l.appTitle;
@@ -737,27 +709,17 @@
                 document.getElementById('label-edit').textContent = l.labelEdit;
                 document.getElementById('label-edit-title').textContent = l.labelEditTitle;
             },
-        function loadFromStorage() {
-            const saved = localStorage.getItem('pmpmlBusAlert');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                state.settings = parsed.settings || state.settings;
-                state.currentRoute = parsed.currentRoute || state.currentRoute;
-            }
-            document.getElementById('alert-toggle').checked = state.settings.alertOn;
-        }
+
             saveSettings: function() {
                 this.state.settings.alertOn = document.getElementById('alert-toggle').checked;
                 this.state.settings.threshold = parseInt(document.getElementById('alert-threshold').value);
                 this.saveToStorage();
             },
-        function openTimingsModal() {
-            alert("Edit Timings feature coming soon ✨");
-        }
+
             saveToStorage: function() {
                 localStorage.setItem('pmpmlBusAlert', JSON.stringify(this.state));
             },
-        window.onload = init;
+
             loadFromStorage: function() {
                 const saved = localStorage.getItem('pmpmlBusAlert');
                 if (saved) {
@@ -766,6 +728,7 @@
                     this.state.routes = parsed.routes || this.state.routes;
                 }
             },
+
             // Edit Timings Modal Methods
             openEditModal: function() {
                 const overlay = document.getElementById('edit-modal');
@@ -802,10 +765,9 @@
                 this.renderTimingsList();
             }
         };
+
         // Initialize App
         window.onload = () => App.init();
     </script>
 </body>
 </html>
-</html>
-
