@@ -572,9 +572,15 @@
             refreshDashboard: function() {
                 const now = new Date();
                 const currentMins = now.getHours() * 60 + now.getMinutes();
-                let timings = [...this.state.routes[this.state.currentRoute]] || [];
+                const routeTimings = this.state.routes[this.state.currentRoute];
+                let timings = routeTimings ? [...routeTimings] : [];
 
-                if (timings.length === 0) return;
+                if (timings.length === 0) {
+                    document.getElementById('next-bus-eta').textContent = "--";
+                    document.getElementById('next-bus-time-label').textContent = "No schedule found";
+                    document.getElementById('upcoming-list-container').innerHTML = "";
+                    return;
+                }
 
                 let upcoming = timings.map(t => {
                     const [h, m] = t.split(':').map(Number);
@@ -724,8 +730,11 @@
                 const saved = localStorage.getItem('pmpmlBusAlert');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    this.state.settings = parsed.settings || this.state.settings;
-                    this.state.routes = parsed.routes || this.state.routes;
+                    this.state.settings = { ...this.state.settings, ...(parsed.settings || {}) };
+                    this.state.routes = { ...this.state.routes, ...(parsed.routes || {}) };
+                    if (parsed.currentRoute) {
+                        this.state.currentRoute = parsed.currentRoute;
+                    }
                 }
             },
 
